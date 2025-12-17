@@ -1,28 +1,89 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProfileController;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/tentang', function () {
-    return view('tentang');
-});
+// Route::get('/tentang', function () {
+//     return view('tentang');
+// });
 
-Route::get('/sapa/{nama}', function ($nama) {
+// Route::get('/sapa/{nama}', function ($nama) {
 
-    return "Halo, $nama! Selamat datang di Toko Online.";
-});
+//     return "Halo, $nama! Selamat datang di Toko Online.";
+// });
 
-Route::get('/kategori/{nama?}', function ($nama = 'Semua') {
+// Route::get('/kategori/{nama?}', function ($nama = 'Semua') {
 
-    return "Menampilkan kategori: $nama";
-});
+//     return "Menampilkan kategori: $nama";
+// });
 
-Route::get('/produk/{id}', function ($id) {
-    return "Detail produk #$id";
-})->name('produk.detail');
+// Route::get('/produk/{id}', function ($id) {
+//     return "Detail produk #$id";
+// })->name('produk.detail');
+// Auth::routes();
+
+
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// ================================================
+// ROUTE YANG MEMERLUKAN LOGIN
+// ================================================
+// middleware('auth') = Harus login dulu untuk akses
+// Jika belum login, otomatis redirect ke /login
+// ================================================
+Route::middleware('auth')->group(function () {
+    // Semua route di dalam group ini HARUS LOGIN
+
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
+        ->name('home');
+    // ↑ ->name('home') = Memberi nama route
+    // Kegunaan: route('home') akan menghasilkan URL /home
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+});
+
+// ========================================
+// FILE: routes/web.php (tambahan untuk admin)
+// ========================================
+
+// ================================================
+// ROUTE KHUSUS ADMIN
+// ================================================
+// middleware(['auth', 'admin']) = Harus login DAN harus admin
+// prefix('admin')               = Semua URL diawali /admin
+// name('admin.')                = Semua nama route diawali admin.
+// ================================================
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // /admin/dashboard
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])
+            ->name('dashboard');
+        // ↑ Nama lengkap route: admin.dashboard
+        // ↑ URL: /admin/dashboard
+
+        // CRUD Produk: /admin/products, /admin/products/create, dll
+        Route::resource('/products', AdminProductController::class);
+        // ↑ resource() membuat 7 route sekaligus:
+        // - GET    /admin/products          → index   (admin.products.index)
+        // - GET    /admin/products/create   → create  (admin.products.create)
+        // - POST   /admin/products          → store   (admin.products.store)
+        // - GET    /admin/products/{id}     → show    (admin.products.show)
+        // - GET    /admin/products/{id}/edit→ edit    (admin.products.edit)
+        // - PUT    /admin/products/{id}     → update  (admin.products.update)
+        // - DELETE /admin/products/{id}     → destroy (admin.products.destroy)
+});
