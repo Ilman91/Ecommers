@@ -25,7 +25,7 @@
         </div>
 
         @if($user->google_id)
-            <!-- <form action="{{ route('profile.google.unlink') }}" method="POST" class="d-inline"> -->
+            {{-- <form action="{{ route('profile.google.unlink') }}" method="POST" class="d-inline"></form> --}}
                 @csrf
                 @method('DELETE')
                 <button type="submit"
@@ -33,7 +33,7 @@
                         onclick="return confirm('Putuskan koneksi dengan Google?')">
                     Putuskan
                 </button>
-            <!-- </form> -->
+            {{-- </form> --}}
         @else
             <a href="{{ route('auth.google') }}" class="btn btn-outline-primary btn-sm">
                 Hubungkan

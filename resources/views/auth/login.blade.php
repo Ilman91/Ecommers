@@ -99,7 +99,7 @@ ditampilkan di @yield('content') --}}
           {{-- ↑ Garis pemisah --}} {{-- ================================================
           TOMBOL LOGIN DENGAN GOOGLE ================================================ --}}
           <div class="d-grid gap-2">
-            <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg">
+            {{-- <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg"></a> --}}
               {{-- ↑ route('auth.google') = URL /auth/google btn-outline-danger = warna
               merah (Google brand) --}} {{-- Google Icon SVG --}}
               <svg class="me-2" width="20" height="20" viewBox="0 0 24 24">
