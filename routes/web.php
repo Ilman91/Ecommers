@@ -11,6 +11,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
@@ -56,6 +57,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::controller(GoogleController::class)->group(function (){
+    //Route 1: REDIRECT KE GOOGLE
+    //URL: auth/google
+    //Dipanggil saat user klik tombol 'Login dengan Google'
+    Route::get('auth/google', 'redirect')
+    ->name('auth.google');
+
+    //Route 1: CALLBACK DARI GOOGLE
+    //URL: auth/google/callback
+    //Dipanggil oleh Google setelah user klil 'Allow'
+    Route::get('auth/google/callback', 'callback')
+    ->name('auth.google.callback');
 });
 
 

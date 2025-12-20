@@ -1,159 +1,139 @@
-{{-- ================================================
-     FILE: resources/views/layouts/admin.blade.php
-     FUNGSI: Master layout untuk halaman admin
-     ================================================ --}}
-
 <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') - Admin Panel</title>
+<!-- =========================================================
+* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
+==============================================================
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
+* Created by: ThemeSelection
+* License: You must have a valid license purchased in order to legally use the theme for your project.
+* Copyright ThemeSelection (https://themeselection.com)
 
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #1e3a5f 0%, #0f172a 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.7);
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin: 4px 12px;
-            transition: all 0.2s;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        .sidebar .nav-link i {
-            width: 24px;
-        }
-    </style>
-    @stack('styles')
-</head>
-<body class="bg-light">
-    <div class="d-flex">
-        {{-- Sidebar --}}
-        <div class="sidebar d-flex flex-column" style="width: 260px;">
-            {{-- Brand --}}
-            <div class="p-3 border-bottom border-secondary">
-                <a href="{{ route('admin.dashboard') }}" class="text-white text-decoration-none d-flex align-items-center">
-                    <i class="bi bi-shop fs-4 me-2"></i>
-                    <span class="fs-5 fw-bold">Admin Panel</span>
-                </a>
-            </div>
+=========================================================
+ -->
+<!-- beautify ignore:start -->
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
 
-            {{-- Navigation --}}
-            <nav class="flex-grow-1 py-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.dashboard') }}"
-                           class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                        </a>
-                    </li>
+    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.products.index') }}"
-                           class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                            <i class="bi bi-box-seam me-2"></i> Produk
-                        </a>
-                    </li>
+    <meta name="description" content="" />
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.categories.index') }}"
-                           class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                            <i class="bi bi-folder me-2"></i> Kategori
-                        </a>
-                    </li>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
-                           class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                            <i class="bi bi-receipt me-2"></i> Pesanan
-                            {{-- Logic PHP di View ini hanya untuk contoh.
-                                 Best Practice: Gunakan View Composer atau inject variable dari Controller.
-                                 Jangan query database langsung di Blade view di production app! --}}
-                            {{-- @php 
-                                $pendingCount = \App\Models\Order::where('status', 'pending')
-                                    ->where('payment_status', 'paid')->count();
-                            @endphp --}}
-                            {{-- @if($pendingCount > 0)
-                                <span class="badge bg-warning text-dark ms-auto">{{ $pendingCount }}</span>
-                            @endif --}}
-                        </a>
-                    </li>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
 
-                    <li class="nav-item">
-                        {{-- <a href="{{ route('admin.users.index') }}"
-                           class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                            <i class="bi bi-people me-2"></i> Pengguna
-                        </a> --}}
-                    </li>
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="{{asset('assets/vendor/fonts/boxicons.css')}}" />
 
-                    <li class="nav-item mt-3">
-                        <span class="nav-link text-muted small text-uppercase">Laporan</span>
-                    </li>
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{asset('assets/vendor/css/core.css')}}" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{{asset('assets/vendor/css/theme-default.css')}}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{asset('assets/css/demo.css')}}" />
 
-                    <li class="nav-item">
-                        {{-- <a href="{{ route('admin.reports.sales') }}"
-                           class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
-                            <i class="bi bi-graph-up me-2"></i> Laporan Penjualan
-                        </a> --}}
-                    </li>
-                </ul>
-            </nav>
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css')}}" />
 
-            {{-- User Info --}}
-            <div class="p-3 border-top border-secondary">
-                <div class="d-flex align-items-center text-white">
-                    <img src="{{ auth()->user()->avatar_url }}"
-                         class="rounded-circle me-2" width="36" height="36">
-                    <div class="flex-grow-1">
-                        <div class="small fw-medium">{{ auth()->user()->name }}</div>
-                        <div class="small text-muted">Administrator</div>
-                    </div>
-                </div>
-            </div>
+    <link rel="stylesheet" href="{{asset('assets/vendor/libs/apex-charts/apex-charts.css')}}" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="{{asset('assets/vendor/js/helpers.js')}}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="{{asset('assets/js/config.js')}}"></script>
+  </head>
+
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        @include('layouts.partials.sidebar')
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+
+          @include('layouts.partials.navbar')
+
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+            @include('partials.flash-messages')
+            @yield('content')
+            
+            <!-- / Content -->
+
+            <!-- Footer -->
+            @include('layouts.partials.footer')
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
         </div>
+        <!-- / Layout page -->
+      </div>
 
-        {{-- Main Content --}}
-        <div class="flex-grow-1">
-            {{-- Top Bar --}}
-            <header class="bg-white shadow-sm py-3 px-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">@yield('page-title', 'Dashboard')</h4>
-                <div class="d-flex align-items-center">
-                    <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm me-2" target="_blank">
-                        <i class="bi bi-box-arrow-up-right me-1"></i> Lihat Toko
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-box-arrow-right me-1"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </header>
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
 
-            {{-- Flash Messages --}}
-            <div class="px-4 pt-3">
-                @include('partials.flash-messages')
-            </div>
-
-            {{-- Page Content --}}
-            <main class="p-4">
-                @yield('content')
-            </main>
-        </div>
+    <div class="buy-now">
+      <a
+        href="{{route('home')}}"
+        class="btn btn-danger btn-buy-now"
+        >Back</a
+      >
     </div>
 
-    @stack('scripts')
-</body>
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="{{asset('assets/vendor/libs/jquery/jquery.js')}}"></script>
+    <script src="{{asset('assets/vendor/libs/popper/popper.js')}}"></script>
+    <script src="{{asset('assets/vendor/js/bootstrap.js')}}"></script>
+    <script src="{{asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js')}}"></script>
+
+    <script src="{{asset('assets/vendor/js/menu.js')}}"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="{{asset('assets/vendor/libs/apex-charts/apexcharts.js')}}"></script>
+
+    <!-- Main JS -->
+    <script src="{{asset('assets/js/main.js')}}"></script>
+
+    <!-- Page JS -->
+    <script src="{{asset('assets/js/dashboards-analytics.js')}}"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
 </html>
