@@ -539,6 +539,13 @@
               </div>
             </div>
             <!-- / Content -->
+            <div class="buy-now">
+              <a
+                href="{{route('home')}}"
+                class="btn btn-danger btn-buy-now"
+                >Back</a
+              >
+            </div>
             <div class="content-backdrop fade"></div>
           </div>
 @endsection

@@ -48,10 +48,10 @@
 </form>
 
 {{-- Hidden Form Delete Avatar --}}
-<form id="delete-avatar-form" action="{{ route('profile.avatar.destroy') }}" method="POST" class="d-none">
+{{-- <form id="delete-avatar-form" action="{{ route('profile.avatar.destroy') }}" method="POST" class="d-none">
     @csrf
     @method('DELETE')
-</form>
+</form> --}}
 
 <script>
     function previewAvatar(event) {
