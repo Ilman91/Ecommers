@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="content-wrapper">
 <div class="container py-5">
     <div class="row">
         {{-- SIDEBAR FILTER --}}
@@ -70,11 +71,11 @@
                     </div>
                 @endforelse
             </div>
-
             <div class="mt-4">
-                {{ $products->links() }}
+                {{ $products->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

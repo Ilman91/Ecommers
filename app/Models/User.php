@@ -45,10 +45,10 @@ class User extends Authenticatable
         return $this->hasOne(Cart::class);
     }
 
-    public function wishlists()
-    {
-        return $this->hasMany(Wishlist::class);
-    }
+    // public function wishlists()
+    // {
+    //     return $this->hasMany(Wishlist::class);
+    // }
 
     public function orders()
     {
@@ -73,62 +73,78 @@ class User extends Authenticatable
         return $this->role === 'customer';
     }
 
-    public function hasInWishlist(Product $product): bool
+    // public function hasInWishlist(Product $product): bool
+    // {
+    //     return $this->wishlists()
+    //                 ->where('product_id', $product->id)
+    //                 ->exists();
+    // }
+
+    //
+    // app/Models/User.php
+
+    // Tambahkan accessor untuk avatar URL
+
+    /**
+     * Get the avatar URL.
+     * Accessor ini otomatis dipanggil saat kita akses $user->avatar_url
+     * Logika Prioritas:
+     * 1. Cek Storage Lokal: Apakah user upload file custom? Jika ya, return URL local storage.
+     * 2. Cek URL Eksternal: Apakah user login via Google? Jika ya, return URL dari Google.
+     * 3. Fallback: Gunakan Gravatar berdasarkan hash email agar user tidak tampil polos.
+     */
+    public function getAvatarUrlAttribute(): string
     {
-        return $this->wishlists()
-                    ->where('product_id', $product->id)
-                    ->exists();
-    }
-// app/Models/User.php
+        // Prioritas 1: Avatar yang di-upload (file fisik ada di server)
+        // Kita harus cek Storage::exists() agar tidak broken image jika file-nya terhapus manual.
+        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
+            return asset('storage/' . $this->avatar);
+        }
 
-// Tambahkan accessor untuk avatar URL
+        // Prioritas 2: Avatar dari Google (URL eksternal dimulai dengan http)
+        // Biasanya ini terjadi saat user login via Socialite (Google Sign-In).
+        if (str_starts_with($this->avatar ?? '', 'http')) {
+            return $this->avatar;
+        }
 
-/**
- * Get the avatar URL.
- * Accessor ini otomatis dipanggil saat kita akses $user->avatar_url
- * Logika Prioritas:
- * 1. Cek Storage Lokal: Apakah user upload file custom? Jika ya, return URL local storage.
- * 2. Cek URL Eksternal: Apakah user login via Google? Jika ya, return URL dari Google.
- * 3. Fallback: Gunakan Gravatar berdasarkan hash email agar user tidak tampil polos.
- */
-public function getAvatarUrlAttribute(): string
-{
-    // Prioritas 1: Avatar yang di-upload (file fisik ada di server)
-    // Kita harus cek Storage::exists() agar tidak broken image jika file-nya terhapus manual.
-    if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
-        return asset('storage/' . $this->avatar);
+        // Prioritas 3: Gravatar (Layanan sedunia untuk avatar berdasarkan email)
+        // Gravatar menggunakan MD5 hash dari email lowercase.
+        // Jika user belum punya gravatar, tampilkan 'mp' (Mystery Person).
+        // &s=200 artinya size gambar 200x200px.
+        $hash = md5(strtolower(trim($this->email)));
+        return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=200";
     }
 
-    // Prioritas 2: Avatar dari Google (URL eksternal dimulai dengan http)
-    // Biasanya ini terjadi saat user login via Socialite (Google Sign-In).
-    if (str_starts_with($this->avatar ?? '', 'http')) {
-        return $this->avatar;
+    /**
+     * Get initials from name for avatar fallback.
+     * Contoh: "Agung Wahyudi" -> "AW"
+     * Berguna jika kita ingin membuat UI avatar berupa inisial huruf teks.
+     */
+    public function getInitialsAttribute(): string
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+
+        foreach ($words as $word) {
+            // Ambil huruf pertama tiap kata dan kapitalkan
+            $initials .= strtoupper(substr($word, 0, 1));
+        }
+
+        // Ambil maksimal 2 huruf pertama saja
+        return substr($initials, 0, 2);
+    }
+    // app/Models/User.php
+
+    public function wishlists()
+    {
+        // Relasi User ke Product melalui tabel wishlists
+        return $this->belongsToMany(Product::class, 'wishlists')
+                    ->withTimestamps(); // Agar created_at/updated_at di pivot terisi
     }
 
-    // Prioritas 3: Gravatar (Layanan sedunia untuk avatar berdasarkan email)
-    // Gravatar menggunakan MD5 hash dari email lowercase.
-    // Jika user belum punya gravatar, tampilkan 'mp' (Mystery Person).
-    // &s=200 artinya size gambar 200x200px.
-    $hash = md5(strtolower(trim($this->email)));
-    return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=200";
-}
-
-/**
- * Get initials from name for avatar fallback.
- * Contoh: "Agung Wahyudi" -> "AW"
- * Berguna jika kita ingin membuat UI avatar berupa inisial huruf teks.
- */
-public function getInitialsAttribute(): string
-{
-    $words = explode(' ', $this->name);
-    $initials = '';
-
-    foreach ($words as $word) {
-        // Ambil huruf pertama tiap kata dan kapitalkan
-        $initials .= strtoupper(substr($word, 0, 1));
+    // Helper untuk cek apakah user sudah wishlist produk tertentu
+    public function hasInWishlist(Product $product)
+    {
+        return $this->wishlists()->where('product_id', $product->id)->exists();
     }
-
-    // Ambil maksimal 2 huruf pertama saja
-    return substr($initials, 0, 2);
-}
 }

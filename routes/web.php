@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\ProductController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Katalog Produk
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/products', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/products/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
 
@@ -95,8 +96,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });
-Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
-Route::get('/product/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Kategori
