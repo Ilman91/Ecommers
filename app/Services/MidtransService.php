@@ -37,6 +37,12 @@ class MidtransService
             throw new Exception('Order tidak memiliki item.');
         }
 
+        // Kalau sudah ada snap_token di DB, jangan generate ulang
+        if ($order->snap_token) {
+        return $order->snap_token;
+        }
+
+
         // ==================== PARAMETER MIDTRANS SNAP ====================
         // Dokumentasi: https://docs.midtrans.com/en/snap/integration-guide?id=request-body-json-object
 
@@ -44,7 +50,7 @@ class MidtransService
         // 'gross_amount' HARUS integer (Rupiah tidak ada sen di Midtrans).
         // Jangan kirim float/string pecahan!
         $transactionDetails = [
-            'order_id'     => $order->order_number, // ID Unik Order
+            'order_id'     => $order->order_number . '-' . time(), // ID Unik Order
             'gross_amount' => (int) $order->total_amount,
         ];
 
@@ -97,6 +103,7 @@ class MidtransService
         // 5. Request Snap Token ke Server Midtrans
         try {
             $snapToken = Snap::getSnapToken($params);
+            $order->update(['snap_token' => $snapToken]);
             return $snapToken;
         } catch (Exception $e) {
             // Log error untuk debugging di 'storage/logs/laravel.log'

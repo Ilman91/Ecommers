@@ -75,7 +75,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{{-- route('admin.orders.index') --}}"
+                        <a href="{{route('admin.orders.index')}}"
                            class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                             <i class="bi bi-receipt me-2"></i> Pesanan
                             {{-- Logic PHP di View ini hanya untuk contoh.

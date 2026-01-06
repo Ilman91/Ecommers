@@ -93,6 +93,16 @@ ditampilkan di @yield('content') --}}
                 Login
               </button>
             </div>
+
+            <div class="mt-3 text-center">
+              @if (Route::has('password.request'))
+              <a class="text-decoration-none"
+                 href="{{ route('password.request') }}">
+                Lupa Password?
+              </a>
+              @endif
+            </div>
+            <hr>
         
 {{-- ======================================== Tambahkan setelah tombol Login biasa ======================================== --}}
           <hr class="my-4" />
