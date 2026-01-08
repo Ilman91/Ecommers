@@ -3,12 +3,30 @@
      FUNGSI: Navigation bar untuk customer
      ================================================ --}}
 
+<style>
+    .logo-brand{
+        color: #76d1ffff;
+    }
+    .search-btn {
+        background-color: #fff;
+        color: #76d1ffff;
+        outline: #76d1ffff;
+        transition: all 0.3s ease;
+    }
+    .search-btn:hover {
+        background-color: #fff;
+        outline: #fff;
+        color: #000000ff;
+        transform: scale(1.05);        /* efek sedikit membesar */
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         {{-- Logo & Brand --}}
-        <a class="navbar-brand text-primary" href="{{ route('home') }}">
-            <i class="bi bi-bag-heart-fill me-2"></i>
-            TokoOnline
+        <a class="navbar-brand logo-brand" href="{{ route('home') }}">
+            <i class="bi bi-box2-heart"></i>
+            KitaElektronik
         </a>
 
         {{-- Mobile Toggle --}}
@@ -28,7 +46,7 @@
                            class="form-control"
                            placeholder="Cari produk..."
                            value="{{ request('q') }}">
-                    <button class="btn btn-outline-primary" type="submit">
+                    <button class="btn btn-outline-dark search-btn" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>

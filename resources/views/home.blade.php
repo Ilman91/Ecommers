@@ -8,8 +8,49 @@ FUNGSI: Halaman utama website
 @section('title', 'Beranda')
 
 @section('content')
+{{-- Internal CSS khusus halaman ini --}}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #76d1ffff, #834ed7ff); /* gradasi biru ke ungu */
+        color: #fff;
+        padding: 5rem 0;
+    }
+    .hero-section h1 {
+        font-weight: 700;
+    }
+    .hero-section p {
+        font-size: 1.2rem;
+    }
+    .hero-btn {
+        background-color: #ffffffff;
+        color: #000;
+        font-weight: 600;
+        border: none;
+    }
+    .hero-btn:hover {
+        background-color: #000000ff;
+        color: #fff;
+    }
+    .featured-section h2 {
+        font-weight: 700;
+    }
+    .featured-btn {
+        background-color: #76d1ffff;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        transition: all 0.3s ease;
+    }
+    .featured-btn:hover {
+        background-color: #000000ff;
+        color: #76d1ffff;
+        transform: scale(1.05);        /* efek sedikit membesar */
+    }
+
+</style>
+
 {{-- Hero Section --}}
-<section class="bg-primary text-white py-5">
+<section class="hero-section py-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -17,10 +58,10 @@ FUNGSI: Halaman utama website
                     Belanja Online Mudah & Terpercaya
                 </h1>
                 <p class="lead mb-4">
-                    Temukan berbagai produk berkualitas dengan harga terbaik.
+                    Temukan berbagai peralatan elektronik dengan harga terbaik.
                     Gratis ongkir untuk pembelian pertama!
                 </p>
-                <a href="{{ route('catalog.index') }}" class="btn btn-light btn-lg">
+                <a href="{{ route('catalog.index') }}" class="btn btn-lg hero-btn">
                     <i class="bi bi-bag me-2"></i>Mulai Belanja
                 </a>
             </div>
@@ -56,11 +97,11 @@ FUNGSI: Halaman utama website
 </section>
 
 {{-- Produk Unggulan --}}
-<section class="py-5 bg-light">
+<section class="featured-section py-5">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Produk Unggulan</h2>
-            <a href="{{ route('catalog.index') }}" class="btn btn-outline-primary">
+            <a href="{{ route('catalog.index') }}" class="featured-btn btn btn-outline-dark">
                 Lihat Semua <i class="bi bi-arrow-right"></i>
             </a>
         </div>

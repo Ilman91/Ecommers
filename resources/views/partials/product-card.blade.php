@@ -75,7 +75,7 @@
             <input type="hidden" name="product_id" value="{{ $product->id }}">
             <input type="hidden" name="quantity" value="1">
             <button type="submit"
-                    class="btn btn-primary btn-sm w-100"
+                    class="btn btn-ligt btn-outline-dark btn-sm w-100"
                     @if($product->stock == 0) disabled @endif>
                 <i class="bi bi-cart-plus me-1"></i>
                 @if($product->stock == 0)

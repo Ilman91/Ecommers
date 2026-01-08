@@ -33,7 +33,7 @@ class OrderController extends Controller
 
     $order->load(['items','user']);
 
-        $snapTokenn = null;
+        $snapToken = null;
         if ($order->status === 'pending') {
             $snapToken = $midtrans->createSnapToken($order);
     }

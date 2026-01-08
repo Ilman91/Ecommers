@@ -64,6 +64,16 @@
                     <td>
                         <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info">Detail</a>
                         <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                        {{-- Tombol Hapus --}}
+                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline"
+                            onsubmit="return confirm('Yakin mau hapus produk ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 @empty
