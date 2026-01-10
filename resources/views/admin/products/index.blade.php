@@ -54,7 +54,7 @@
                     </td>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->category->name }}</td>
-                    <td>Rp {{ number_format($product->price) }}</td>
+                    <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                     <td>{{ $product->stock }}</td>
                     <td>
                         <span class="badge bg-{{ $product->is_active ? 'success' : 'secondary' }}">
@@ -63,14 +63,14 @@
                     </td>
                     <td>
                         <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info">Detail</a>
-                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-warning ms-2">Edit</a>
 
                         {{-- Tombol Hapus --}}
                         <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('Yakin mau hapus produk ini?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">
+                            <button type="submit" class="btn btn-sm btn-danger mt-2">
                                 Hapus
                             </button>
                         </form>

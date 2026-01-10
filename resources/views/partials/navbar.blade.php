@@ -7,17 +7,27 @@
     .logo-brand{
         color: #76d1ffff;
     }
+    .search {
+        border: 2px solid #000000ff;       /* outline ungu */
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    .search:focus {
+        border-color: #76d1ffff;         /* fokus jadi merah muda */
+        box-shadow: 0 0 0 0.2rem rgba(8, 152, 255, 0.25); /* glow ungu */
+    }
+    .search::placeholder {
+        color: #999;
+        font-style: italic;
+    }
     .search-btn {
-        background-color: #fff;
+        border: 2px solid #000000ff;
         color: #76d1ffff;
-        outline: #76d1ffff;
         transition: all 0.3s ease;
     }
     .search-btn:hover {
-        background-color: #fff;
-        outline: #fff;
-        color: #000000ff;
-        transform: scale(1.05);        /* efek sedikit membesar */
+        background-color: #76d1ffff;
+        color: #fff;
     }
 </style>
 
@@ -43,7 +53,7 @@
                   action="{{ route('catalog.index') }}" method="GET">
                 <div class="input-group">
                     <input type="text" name="q"
-                           class="form-control"
+                           class="form-control search"
                            placeholder="Cari produk..."
                            value="{{ request('q') }}">
                     <button class="btn btn-outline-dark search-btn" type="submit">

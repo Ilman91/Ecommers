@@ -131,7 +131,7 @@
                                             onsubmit="return confirm('Yakin hapus kategori ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger ms-2" title="Hapus">
                                                 <i class="bi bi-trash">Delete</i>
                                             </button>
                                         </form>

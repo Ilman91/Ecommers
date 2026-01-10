@@ -66,7 +66,7 @@ FUNGSI: Halaman utama website
                 </a>
             </div>
             <div class="col-lg-6 d-none d-lg-block text-center">
-                <img src="{{ asset('images/hero-shopping.svg') }}" alt="Shopping" class="img-fluid"
+                <img src="{{ asset('images/hero-shopping.png') }}" alt="Shopping" class="img-fluid"
                     style="max-height: 400px;">
             </div>
         </div>
