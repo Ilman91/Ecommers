@@ -8,7 +8,6 @@
         @csrf
 
         <div class="row g-5">
-            <!-- Form Informasi Pengiriman -->
             <div class="col-lg-8">
                 <div class="card shadow-sm">
                     <div class="card-body">
@@ -35,19 +34,26 @@
                 </div>
             </div>
 
-            <!-- Ringkasan Pesanan -->
             <div class="col-lg-4">
                 <div class="card shadow-sm sticky-top" style="top: 1.5rem;">
                     <div class="card-body">
                         <h2 class="h5 card-title mb-4">Ringkasan Pesanan</h2>
 
                         <div class="mb-4" style="max-height: 300px; overflow-y: auto;">
+                            @php $grandTotal = 0; @endphp
                             @foreach($cart->items as $item)
-                            <div class="d-flex justify-content-between mb-2 small text-muted">
-                                <span>{{ $item->product->name }} × {{ $item->quantity }}</span>
-                                <span class="fw-medium text-dark">Rp {{ number_format($item->subtotal, 0, ',', '.')
-                                    }}</span>
-                            </div>
+                                @php
+                                    // Hitung harga satuan (diskon vs normal)
+                                    $price = ($item->product->discount_price > 0) ? $item->product->discount_price : $item->product->price;
+                                    $subtotal = $price * $item->quantity;
+                                    $grandTotal += $subtotal;
+                                @endphp
+                                <div class="d-flex justify-content-between mb-2 small text-muted">
+                                    <span>{{ $item->product->name }} × {{ $item->quantity }}</span>
+                                    <span class="fw-medium text-dark">
+                                        Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                    </span>
+                                </div>
                             @endforeach
                         </div>
 
@@ -55,8 +61,9 @@
 
                         <div class="d-flex justify-content-between mb-4">
                             <span class="h6 mb-0">Total</span>
-                            <span class="h6 mb-0 fw-bold">Rp {{ number_format($cart->items->sum('subtotal'), 0, ',',
-                                '.') }}</span>
+                            <span class="h6 mb-0 fw-bold text-primary">
+                                Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                            </span>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">

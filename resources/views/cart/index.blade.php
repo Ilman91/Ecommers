@@ -1,6 +1,6 @@
 {{-- ================================================
      FILE: resources/views/cart/index.blade.php
-     FUNGSI: Halaman keranjang belanja
+     FUNGSI: Halaman keranjang belanja dengan info diskon
      ================================================ --}}
 
 @extends('layouts.app')
@@ -14,6 +14,14 @@
     </h2>
 
     @if($cart && $cart->items->count())
+        @php
+            // Hitung Grand Total secara manual untuk memastikan harga diskon terhitung benar
+            $grandTotal = $cart->items->sum(function($item) {
+                $price = ($item->product->discount_price > 0) ? $item->product->discount_price : $item->product->price;
+                return $price * $item->quantity;
+            });
+        @endphp
+
         <div class="row">
             {{-- Cart Items --}}
             <div class="col-lg-8 mb-4">
@@ -31,6 +39,12 @@
                             </thead>
                             <tbody>
                                 @foreach($cart->items as $item)
+                                    @php
+                                        // Logika penentuan harga yang digunakan
+                                        $hasDiscount = $item->product->discount_price > 0;
+                                        $currentPrice = $hasDiscount ? $item->product->discount_price : $item->product->price;
+                                        $itemSubtotal = $currentPrice * $item->quantity;
+                                    @endphp
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -46,11 +60,22 @@
                                                     <div class="small text-muted">
                                                         {{ $item->product->category->name }}
                                                     </div>
+                                                    
+                                                    {{-- INFO DISKON (OPSI 1) --}}
+                                                    @if($hasDiscount)
+                                                        <div class="mt-1">
+                                                            <span class="badge bg-danger">Diskon</span>
+                                                            <small class="text-muted text-decoration-line-through ms-1">
+                                                                Rp {{ number_format($item->product->price, 0, ',', '.') }}
+                                                            </small>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="text-center align-middle">
-                                            {{ $item->product->formatted_price }}
+                                            {{-- Menampilkan harga diskon jika ada, jika tidak tampilkan harga normal --}}
+                                            Rp {{ number_format($currentPrice, 0, ',', '.') }}
                                         </td>
                                         <td class="text-center align-middle">
                                             <form action="{{ route('cart.update', $item->id) }}" method="POST"
@@ -66,9 +91,10 @@
                                             </form>
                                         </td>
                                         <td class="text-end align-middle fw-bold">
-                                            Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                                            {{-- Subtotal sekarang menggunakan hasil kalkulasi yang benar --}}
+                                            Rp {{ number_format($itemSubtotal, 0, ',', '.') }}
                                         </td>
-                                        <td class="align-middle">
+                                        <td class="align-middle text-center">
                                             <form action="{{ route('cart.remove', $item->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
@@ -95,13 +121,13 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Total Harga ({{ $cart->items->sum('quantity') }} barang)</span>
-                            <span>Rp {{ number_format($cart->items->sum('subtotal'), 0, ',', '.') }}</span>
+                            <span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="fw-bold">Total</span>
                             <span class="fw-bold text-primary fs-5">
-                                Rp {{ number_format($cart->items->sum('subtotal'), 0, ',', '.') }}
+                                Rp {{ number_format($grandTotal, 0, ',', '.') }}
                             </span>
                         </div>
                         <a href="{{ route('checkout.index') }}" class="btn btn-primary w-100 btn-lg">

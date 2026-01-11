@@ -16,7 +16,10 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\MidtransNotificationController;
 // ================================================
 // HALAMAN PUBLIK (Tanpa Login)
@@ -82,6 +85,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('products', ProductController::class);
 
     // Manajemen Pesanan
+    Route::get('/orders/{order}/snap-token', [PaymentController::class, 'getSnapToken'])
+        ->name('orders.snap-token');
     Route::get('/orders/{order}/pay', [PaymentController::class, 'show'])
         ->name('orders.pay');
     Route::get('/orders/{order}/success', [PaymentController::class, 'success'])
@@ -91,6 +96,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Resource route untuk orders (index, show, update)
     Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class)->only(['index', 'show', 'update']);
+
+    // Manajemen Pengguna
+    Route::get('/users', [UserController::class, 'index'])
+            ->name('users.index');
+
+    // Laporan Penjualan
+    Route::get('/reports/sales',
+            [ReportController::class, 'sales']
+        )->name('reports.sales');
+    Route::get('/reports/sales/export',
+            [ReportController::class, 'exportSales']
+        )->name('reports.export-sales');
 
 });
 

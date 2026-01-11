@@ -62,18 +62,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($order->items as $item)
-                                <tr>
-                                    <td>{{ $item->product_name }}</td>
-                                    <td class="text-center">{{ $item->quantity }}</td>
-                                    <td class="text-end">
-                                        Rp {{ number_format($item->price, 0, ',', '.') }}
-                                    </td>
-                                    <td class="text-end">
-                                        Rp {{ number_format($item->subtotal, 0, ',', '.') }}
-                                    </td>
-                                </tr>
-                                @endforeach
+                               @foreach($order->items as $item)
+<tr>
+    <td>
+        <span class="fw-medium text-dark">{{ $item->product_name }}</span>
+    </td>
+    <td class="text-center">{{ $item->quantity }}</td>
+    <td class="text-end">
+        {{-- Jika harga di order_item lebih kecil dari harga asli produk saat ini, tampilkan coretan --}}
+        @if($item->product && $item->price < $item->product->price)
+            <small class="text-muted text-decoration-line-through d-block" style="font-size: 0.8rem;">
+                Rp {{ number_format($item->product->price, 0, ',', '.') }}
+            </small>
+        @endif
+        <span class="fw-bold text-primary">
+            Rp {{ number_format($item->price, 0, ',', '.') }}
+        </span>
+    </td>
+    <td class="text-end fw-bold">
+        Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+    </td>
+</tr>
+@endforeach
                             </tbody>
                             <tfoot class="border-top border-3">
                                 @if($order->shipping_cost > 0)

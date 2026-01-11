@@ -66,8 +66,10 @@ FUNGSI: Halaman utama website
                 </a>
             </div>
             <div class="col-lg-6 d-none d-lg-block text-center">
-                <img src="{{ asset('images/hero-shopping.png') }}" alt="Shopping" class="img-fluid"
+                <a href="{{ route('catalog.index') }}">
+                    <img src="{{ asset('images/hero-shopping.png') }}" alt="Shopping" class="img-fluid"
                     style="max-height: 400px;">
+                </a>
             </div>
         </div>
     </div>
@@ -124,7 +126,7 @@ FUNGSI: Halaman utama website
                     <div class="card-body d-flex flex-column justify-content-center">
                         <h3>Flash Sale!</h3>
                         <p>Diskon hingga 50% untuk produk pilihan</p>
-                        <a href="#" class="btn btn-dark" style="width: fit-content;">
+                        <a href="{{ route('catalog.index', ['on_sale' => 1]) }}" class="btn btn-dark" style="width: fit-content;">
                             Lihat Promo
                         </a>
                     </div>
