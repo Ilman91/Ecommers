@@ -100,6 +100,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Manajemen Pengguna
     Route::get('/users', [UserController::class, 'index'])
             ->name('users.index');
+    // Tambahkan baris di bawah ini:
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])
+            ->name('users.destroy');
 
     // Laporan Penjualan
     Route::get('/reports/sales',
