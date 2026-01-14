@@ -9,25 +9,46 @@
         <h2 class="h3 mb-0 text-gray-800">Laporan Penjualan</h2>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    {{-- Filter Card --}}
+    <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
-            <form method="GET" class="row align-items-end g-3">
+            <form method="GET" class="row g-3 align-items-end">
+                {{-- Kalender Dari --}}
                 <div class="col-md-3">
-                    <label class="form-label">Dari Tanggal</label>
-                    <input type="date" name="date_from" value="{{ $dateFrom }}" class="form-control">
+                    <label class="form-label fw-bold small text-muted">DARI TANGGAL</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-calendar-range"></i></span>
+                        <input type="date" name="date_from" value="{{ $dateFrom }}" class="form-control border-start-0 ps-0">
+                    </div>
                 </div>
+
+                {{-- Kalender Sampai --}}
                 <div class="col-md-3">
-                    <label class="form-label">Sampai Tanggal</label>
-                    <input type="date" name="date_to" value="{{ $dateTo }}" class="form-control">
+                    <label class="form-label fw-bold small text-muted">SAMPAI TANGGAL</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-calendar-check"></i></span>
+                        <input type="date" name="date_to" value="{{ $dateTo }}" class="form-control border-start-0 ps-0">
+                    </div>
                 </div>
-                <div class="col-md-6 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-search me-1"></i> Filter
-                    </button>
-                    {{-- Tombol Export --}}
-                    <a href="{{ route('admin.reports.export-sales', request()->all()) }}" class="btn btn-success">
-                        <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
-                    </a>
+
+                {{-- Action Buttons --}}
+                <div class="col-md-6">
+                    <div class="d-flex gap-2">
+                        {{-- Tombol Filter --}}
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-funnel-fill me-1"></i> Terapkan Filter
+                        </button>
+                        
+                        {{-- Tombol Reset --}}
+                        <a href="{{ route('admin.reports.sales') }}" class="btn btn-outline-secondary" title="Reset Filter">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </a>
+
+                        {{-- Tombol Export --}}
+                        <a href="{{ route('admin.reports.export-sales', request()->all()) }}" class="btn btn-success px-4">
+                            <i class="bi bi-file-earmark-excel me-1"></i> Export
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -55,7 +76,7 @@
                     <div class="h3 fw-bold text-dark mb-0">
                         {{ number_format($summary->total_orders ?? 0) }}
                     </div>
-                    <small class="text-muted">Order paid</small>
+                    <small class="text-muted">Pesanan Dibayar</small>
                 </div>
             </div>
         </div>

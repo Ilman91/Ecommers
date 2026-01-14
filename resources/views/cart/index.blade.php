@@ -1,7 +1,4 @@
-{{-- ================================================
-     FILE: resources/views/cart/index.blade.php
-     FUNGSI: Halaman keranjang belanja dengan info diskon
-     ================================================ --}}
+{{-- resources/views/cart/index.blade.php --}}
 
 @extends('layouts.app')
 
@@ -9,100 +6,99 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="mb-4">
-        <i class="bi bi-cart3 me-2"></i>Keranjang Belanja
-    </h2>
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-danger text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+            <i class="bi bi-cart3 fs-4"></i>
+        </div>
+        <h2 class="fw-bold mb-0">Keranjang Belanja</h2>
+    </div>
 
     @if($cart && $cart->items->count())
         @php
-            // Hitung Grand Total secara manual untuk memastikan harga diskon terhitung benar
+            // Hitung Grand Total menggunakan harga yang benar (Normal vs Diskon)
             $grandTotal = $cart->items->sum(function($item) {
-                $price = ($item->product->discount_price > 0) ? $item->product->discount_price : $item->product->price;
-                return $price * $item->quantity;
+                return ($item->product->has_discount ? $item->product->discount_price : $item->product->price) * $item->quantity;
             });
         @endphp
 
-        <div class="row">
-            {{-- Cart Items --}}
-            <div class="col-lg-8 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body p-0">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+        <div class="row g-4">
+            {{-- Daftar Item Keranjang --}}
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="bg-light text-muted small uppercase">
                                 <tr>
-                                    <th style="width: 50%">Produk</th>
-                                    <th class="text-center">Harga</th>
-                                    <th class="text-center">Jumlah</th>
-                                    <th class="text-end">Subtotal</th>
-                                    <th></th>
+                                    <th class="ps-4 py-3">Produk</th>
+                                    <th class="text-center py-3">Harga</th>
+                                    <th class="text-center py-3">Jumlah</th>
+                                    <th class="text-end pe-4 py-3">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($cart->items as $item)
                                     @php
-                                        // Logika penentuan harga yang digunakan
-                                        $hasDiscount = $item->product->discount_price > 0;
+                                        $hasDiscount = $item->product->has_discount;
                                         $currentPrice = $hasDiscount ? $item->product->discount_price : $item->product->price;
                                         $itemSubtotal = $currentPrice * $item->quantity;
                                     @endphp
                                     <tr>
-                                        <td>
+                                        <td class="ps-4 py-3">
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ $item->product->image_url }}"
-                                                     class="rounded me-3"
-                                                     width="60" height="60"
-                                                     style="object-fit: cover;">
-                                                <div>
-                                                    <a href="{{ route('catalog.show', $item->product->slug) }}"
-                                                       class="text-decoration-none text-dark fw-medium">
-                                                        {{ Str::limit($item->product->name, 40) }}
+                                                <div class="position-relative">
+                                                    <img src="{{ $item->product->image_url }}" 
+                                                         class="rounded-3 border" 
+                                                         width="70" height="70" 
+                                                         style="object-fit: cover;">
+                                                    <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="position-absolute top-0 start-0 translate-middle">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm" 
+                                                                style="width: 24px; height: 24px;" 
+                                                                onclick="return confirm('Hapus produk ini?')">
+                                                            <i class="bi bi-x" style="font-size: 18px;"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <a href="{{ route('catalog.show', $item->product->slug) }}" class="text-decoration-none text-dark fw-bold mb-0 d-block">
+                                                        {{ Str::limit($item->product->name, 35) }}
                                                     </a>
-                                                    <div class="small text-muted">
+                                                    <span class="badge bg-light text-muted border-0 p-0" style="font-size: 0.75rem;">
                                                         {{ $item->product->category->name }}
-                                                    </div>
-                                                    
-                                                    {{-- INFO DISKON (OPSI 1) --}}
-                                                    @if($hasDiscount)
-                                                        <div class="mt-1">
-                                                            <span class="badge bg-danger">Diskon</span>
-                                                            <small class="text-muted text-decoration-line-through ms-1">
-                                                                Rp {{ number_format($item->product->price, 0, ',', '.') }}
-                                                            </small>
-                                                        </div>
-                                                    @endif
+                                                    </span>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-center align-middle">
-                                            {{-- Menampilkan harga diskon jika ada, jika tidak tampilkan harga normal --}}
-                                            Rp {{ number_format($currentPrice, 0, ',', '.') }}
+                                        <td class="text-center py-3">
+                                            @if($hasDiscount)
+                                                <div class="text-muted small text-decoration-line-through">
+                                                    Rp{{ number_format($item->product->price, 0, ',', '.') }}
+                                                </div>
+                                                <div class="fw-bold text-danger">
+                                                    Rp{{ number_format($item->product->discount_price, 0, ',', '.') }}
+                                                </div>
+                                            @else
+                                                <div class="fw-bold text-dark">
+                                                    Rp{{ number_format($item->product->price, 0, ',', '.') }}
+                                                </div>
+                                            @endif
                                         </td>
-                                        <td class="text-center align-middle">
-                                            <form action="{{ route('cart.update', $item->id) }}" method="POST"
-                                                  class="d-inline-flex align-items-center">
+                                        <td class="text-center py-3" style="min-width: 120px;">
+                                            <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-flex justify-content-center">
                                                 @csrf
                                                 @method('PATCH')
-                                                <input type="number" name="quantity"
-                                                       value="{{ $item->quantity }}"
-                                                       min="1" max="{{ $item->product->stock }}"
-                                                       class="form-control form-control-sm text-center"
-                                                       style="width: 70px;"
-                                                       onchange="this.form.submit()">
+                                                <div class="input-group input-group-sm border rounded-pill overflow-hidden" style="width: 100px;">
+                                                    <input type="number" name="quantity" 
+                                                           value="{{ $item->quantity }}" 
+                                                           min="1" max="{{ $item->product->stock }}" 
+                                                           class="form-control border-0 text-center fw-bold bg-white"
+                                                           onchange="this.form.submit()">
+                                                </div>
                                             </form>
                                         </td>
-                                        <td class="text-end align-middle fw-bold">
-                                            {{-- Subtotal sekarang menggunakan hasil kalkulasi yang benar --}}
-                                            Rp {{ number_format($itemSubtotal, 0, ',', '.') }}
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <form action="{{ route('cart.remove', $item->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        onclick="return confirm('Hapus item ini?')">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
+                                        <td class="text-end pe-4 py-3 fw-bold fs-6 text-dark">
+                                            Rp{{ number_format($itemSubtotal, 0, ',', '.') }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -112,42 +108,48 @@
                 </div>
             </div>
 
-            {{-- Order Summary --}}
+            {{-- Ringkasan Pesanan --}}
             <div class="col-lg-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Ringkasan Belanja</h5>
-                    </div>
+                <div class="card border-0 shadow-sm rounded-4 p-2">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
+                        <h5 class="fw-bold mb-4">Ringkasan Belanja</h5>
+                        
+                        <div class="d-flex justify-content-between mb-2 text-muted">
                             <span>Total Harga ({{ $cart->items->sum('quantity') }} barang)</span>
-                            <span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+                            <span>Rp{{ number_format($grandTotal, 0, ',', '.') }}</span>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="fw-bold">Total</span>
-                            <span class="fw-bold text-primary fs-5">
-                                Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                        
+                        <hr class="my-4" style="border-style: dashed;">
+                        
+                        <div class="d-flex justify-content-between mb-4 align-items-center">
+                            <span class="fw-bold fs-5">Total Bayar</span>
+                            <span class="fw-bold text-danger fs-4">
+                                Rp{{ number_format($grandTotal, 0, ',', '.') }}
                             </span>
                         </div>
-                        <a href="{{ route('checkout.index') }}" class="btn btn-primary w-100 btn-lg">
-                            <i class="bi bi-credit-card me-2"></i>Checkout
+                        
+                        <a href="{{ route('checkout.index') }}" class="btn btn-danger w-100 btn-lg rounded-pill py-3 fw-bold mb-3 shadow-sm">
+                            Lanjut ke Pembayaran
                         </a>
-                        <a href="{{ route('catalog.index') }}" class="btn btn-outline-secondary w-100 mt-2">
-                            <i class="bi bi-arrow-left me-2"></i>Lanjut Belanja
+                        <a href="{{ route('catalog.index') }}" class="btn btn-link w-100 text-decoration-none text-muted">
+                            <i class="bi bi-arrow-left me-2"></i>Tambah Produk Lain
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     @else
-        {{-- Empty Cart --}}
+        {{-- Tampilan Keranjang Kosong --}}
         <div class="text-center py-5">
-            <i class="bi bi-cart-x display-1 text-muted"></i>
-            <h4 class="mt-3">Keranjang Kosong</h4>
-            <p class="text-muted">Belum ada produk di keranjang belanja kamu</p>
-            <a href="{{ route('catalog.index') }}" class="btn btn-primary">
-                <i class="bi bi-bag me-2"></i>Mulai Belanja
+            <div class="mb-4">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                    <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+                </div>
+            </div>
+            <h3 class="fw-bold">Wah, keranjangmu masih kosong!</h3>
+            <p class="text-muted mb-4">Yuk, cari barang impianmu dan mulai belanja sekarang.</p>
+            <a href="{{ route('catalog.index') }}" class="btn btn-danger btn-lg px-5 rounded-pill shadow-sm">
+                Mulai Belanja
             </a>
         </div>
     @endif

@@ -32,33 +32,20 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        // 1. Handle Upload Avatar
-        // Cek apakah user mengupload file baru di input 'avatar'?
-        if ($request->hasFile('avatar')) {
-            // Upload file baru dan dapatkan path-nya (e.g., avatars/xxx.jpg)
-            $avatarPath = $this->uploadAvatar($request, $user);
-
-            // Simpan path ke properti model, tapi belum di-save ke DB (masih di memory)
-            $user->avatar = $avatarPath;
-        }
-
-        // 2. Update Data Text (Nama, Email, dll)
-        // fill() mengisi atribut model dengan data validasi, tapi belum disimpan ke DB.
-        // Ini lebih aman daripada $user->update() langsung karena kita mau cek 'isDirty' dulu.
+        // fill() hanya akan mengambil data yang lolos validasi (yang dikirim saja)
         $user->fill($request->validated());
 
-        // 3. Cek Perubahan Email
-        // Jika email berubah, kita harus membatalkan status verifikasi email (isDirty cek perubahan di memory).
+        if ($request->hasFile('avatar')) {
+            $user->avatar = $this->uploadAvatar($request, $user);
+        }
+
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        // 4. Simpan ke Database
-        // Method save() baru benar-benar menjalankan query UPDATE ke database.
         $user->save();
 
-        return Redirect::route('profile.edit')
-            ->with('success', 'Profil berhasil diperbarui!');
+        return Redirect::route('profile.edit')->with('success', 'Perubahan berhasil disimpan!');
     }
 
     /**
@@ -118,7 +105,7 @@ class ProfileController extends Controller
             'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
         ]);
 
-        return back()->with('status', 'password-updated');
+        return back()->with('success', 'Password berhasil diperbarui!');
     }
 
     /**

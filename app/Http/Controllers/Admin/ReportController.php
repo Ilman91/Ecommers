@@ -28,8 +28,8 @@ class ReportController extends Controller
         // 1. Tentukan Default Tanggal
         // Jika user tidak memilih tanggal, kita set default ke BULAN INI.
         // startOfMonth() otomatis mengambil tanggal 1 bulan berjalan.
-        $dateFrom = $request->date_from ?? now()->startOfMonth()->toDateString();
-        $dateTo   = $request->date_to ?? now()->toDateString();
+        $dateFrom = $request->query('date_from') ?? now()->startOfMonth()->toDateString();
+        $dateTo   = $request->query('date_to')   ?? now()->toDateString();
 
         // 2. Query Utama (Tabel Transaksi Detail)
         // Kita gunakan paginate() agar beban server ringan meskipun datanya ribuan.
@@ -38,7 +38,8 @@ class ReportController extends Controller
             ->whereDate('created_at', '<=', $dateTo)
             ->where('payment_status', 'paid') // PENTING: Hanya hitung yang 'paid' (uang masuk)
             ->latest() // alias orderBy created_at desc
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
         // 3. Query Summary (Total Omset di periode ini)
         // Perhatikan: Kita tidak menggunakan data pagination ($orders) untuk menghitung total.

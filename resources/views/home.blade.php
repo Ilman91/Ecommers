@@ -11,7 +11,7 @@ FUNGSI: Halaman utama website
 {{-- Internal CSS khusus halaman ini --}}
 <style>
     .hero-section {
-        background: linear-gradient(135deg, #76d1ffff, #834ed7ff); /* gradasi biru ke ungu */
+        background: linear-gradient(135deg, rgb(251, 186, 186), rgb(215, 78, 78)); /* gradasi biru ke ungu */
         color: #fff;
         padding: 5rem 0;
     }
@@ -35,15 +35,15 @@ FUNGSI: Halaman utama website
         font-weight: 700;
     }
     .featured-btn {
-        background-color: #76d1ffff;
-        color: #fff;
+        background-color: rgb(251, 186, 186);
+        color: #000000;
         font-weight: 600;
         padding: 0.6rem 1.2rem;
         transition: all 0.3s ease;
     }
     .featured-btn:hover {
         background-color: #000000ff;
-        color: #76d1ffff;
+        color: rgb(255, 255, 255);
         transform: scale(1.05);        /* efek sedikit membesar */
     }
 
@@ -59,7 +59,7 @@ FUNGSI: Halaman utama website
                 </h1>
                 <p class="lead mb-4">
                     Temukan berbagai peralatan elektronik dengan harga terbaik.
-                    Gratis ongkir untuk pembelian pertama!
+                    Belanja mudah, aman, dan nyaman.
                 </p>
                 <a href="{{ route('catalog.index') }}" class="btn btn-lg hero-btn">
                     <i class="bi bi-bag me-2"></i>Mulai Belanja
@@ -86,7 +86,7 @@ FUNGSI: Halaman utama website
                     <div class="card border-0 shadow-sm text-center h-100">
                         <div class="card-body">
                             <img src="{{ $category->image_url }}" alt="{{ $category->name }}"
-                                class="rounded-circle mb-3" width="80" height="80" style="object-fit: cover;">
+                                class="mb-3" width="80" height="80" style="object-fit: cover;">
                             <h6 class="card-title mb-0">{{ $category->name }}</h6>
                             <small class="text-muted">{{ $category->products_count }} produk</small>
                         </div>
@@ -121,8 +121,9 @@ FUNGSI: Halaman utama website
 <section class="py-5">
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card bg-warning text-dark border-0" style="min-height: 200px;">
+            {{-- Banner Flash Sale (Muncul buat siapa saja) --}}
+            <div class="{{ Auth::check() ? 'col-12' : 'col-md-6' }}"> {{-- Kalau sudah login, banner ini jadi full width --}}
+                <div class="card bg-warning text-dark border-0 shadow-sm" style="min-height: 200px;">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <h3>Flash Sale!</h3>
                         <p>Diskon hingga 50% untuk produk pilihan</p>
@@ -132,17 +133,21 @@ FUNGSI: Halaman utama website
                     </div>
                 </div>
             </div>
+
+            {{-- Banner Member Baru (HANYA MUNCUL JIKA GUEST/BELUM LOGIN) --}}
+            @guest
             <div class="col-md-6">
-                <div class="card bg-info text-white border-0" style="min-height: 200px;">
+                <div class="card bg-info text-white border-0 shadow-sm" style="min-height: 200px; background: linear-gradient(45deg, #0dcaf0, #007bff) !important;">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <h3>Member Baru?</h3>
                         <p>Dapatkan voucher Rp 50.000 untuk pembelian pertama</p>
-                        <a href="{{ route('register') }}" class="btn btn-light" style="width: fit-content;">
+                        <a href="{{ route('register') }}" class="btn btn-light fw-bold" style="width: fit-content; color: #007bff;">
                             Daftar Sekarang
                         </a>
                     </div>
                 </div>
             </div>
+            @endguest
         </div>
     </div>
 </section>

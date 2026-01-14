@@ -6,7 +6,7 @@
 <style>
     /* ===== FIX ICON & MODAL THEME ===== */
     .card-header {
-        background-color: #d3d3d3ff;
+        background-color: rgb(255, 255, 255);
     }
     .bi {
         font-family: bootstrap-icons !important;
@@ -124,7 +124,7 @@
                                     <div class="btn-group">
                                         <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
                                             data-bs-target="#editModal{{ $category->id }}" title="Edit">
-                                            <i class="bi bi-pencil">Edit</i>
+                                            <i class="bi bi-pencil"></i>
                                         </button>
 
                                         <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
@@ -132,7 +132,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger ms-2" title="Hapus">
-                                                <i class="bi bi-trash">Delete</i>
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
                                     </div>

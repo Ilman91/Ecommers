@@ -19,22 +19,22 @@ class DashboardController extends Controller
         // Alasan: Jauh lebih hemat memori server.
 
         $stats = [
-            'total_revenue' => Order::whereIn('status', ['processing', 'completed'])
-                                    ->sum('total_amount'), // SQL: SELECT SUM(total_amount) FROM orders WHERE ...
+            // FIX: Gunakan payment_status 'paid' agar sinkron dengan grafik
+            'total_revenue' => Order::where('payment_status', 'paid')
+                                    ->sum('total_amount'), 
 
-            'total_orders' => Order::count(), // SQL: SELECT COUNT(*) FROM orders
+            'total_orders' => Order::count(),
 
-            // Pending Orders: Yang perlu tindakan segera admin
-            'pending_orders' => Order::where('status', 'pending')
-                                     ->where('payment_status', 'paid') // Sudah bayar tapi belum diproses
-                                     ->count(),
+            // FIX: Pending orders adalah yang sudah BAYAR tapi statusnya masih 'pending' atau 'processing'
+            // (Artinya perlu tindakan admin untuk memproses/mengirim barang)
+            'pending_orders' => Order::where('payment_status', 'paid')
+                                    ->whereIn('status', ['pending', 'processing'])
+                                    ->count(),
 
             'total_products' => Product::count(),
 
             'total_customers' => User::where('role', 'customer')->count(),
 
-            // Stok Rendah: Produk dengan stok <= 5
-            // Berguna untuk notifikasi re-stock
             'low_stock' => Product::where('stock', '<=', 5)->count(),
         ];
 

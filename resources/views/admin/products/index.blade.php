@@ -54,7 +54,20 @@
                     </td>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->category->name }}</td>
-                    <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                    <td>
+                        @if($product->discount_price && $product->discount_price < $product->price)
+                            <small class="text-muted text-decoration-line-through d-block" style="font-size: 0.8rem;">
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                            </small>
+                            <span class="fw-bold text-danger">
+                                Rp {{ number_format($product->discount_price, 0, ',', '.') }}
+                            </span>
+                        @else
+                            <span class="fw-bold text-dark">
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                            </span>
+                        @endif
+                    </td>
                     <td>{{ $product->stock }}</td>
                     <td>
                         <span class="badge bg-{{ $product->is_active ? 'success' : 'secondary' }}">
@@ -62,16 +75,16 @@
                         </span>
                     </td>
                     <td>
-                        <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info">Detail</a>
-                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-warning ms-2">Edit</a>
+                        <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info"><i class="bi bi-eye me-1"></i></a>
+                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
 
                         {{-- Tombol Hapus --}}
                         <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('Yakin mau hapus produk ini?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger mt-2">
-                                Hapus
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </td>

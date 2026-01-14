@@ -27,22 +27,19 @@ class ProfileUpdateRequest extends FormRequest
         return [
             // Nama: wajib, string, max 255 karakter
             'name' => [
+                'sometimes', // Validasi hanya jika field ini ada di request
                 'required',
                 'string',
                 'max:255',
             ],
 
-            // Email: wajib, format email valid, unik (kecuali milik user ini)
-            // Kasus Penting: User ingin ganti nama tapi tidak ganti email.
-            // Jika validasi email tetap 'unique:users', maka akan error "Email sudah terdaftar" (karena email dia sendiri).
-            // Solusi: ->ignore($id) memberitahu database untuk melewati pengecekan unique pada baris ID user ini.
             'email' => [
+                'sometimes', // Validasi hanya jika field ini ada di request
                 'required',
                 'string',
                 'lowercase',
                 'email',
                 'max:255',
-                // Rule::unique('users')->ignore($this->user()->id)
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
 
@@ -70,8 +67,7 @@ class ProfileUpdateRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpeg,jpg,png,webp',
-                'max:2048',
-                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+                'max:2048', // 2MB udah cukup banget buat avatar
             ],
         ];
     }

@@ -9,17 +9,17 @@
             {{-- Brand & Description --}}
             <div class="col-lg-4 col-md-6">
                 <h5 class="text-white mb-3">
-                    <i class="bi bi-bag-heart-fill me-2"></i>TokoOnline
+                    <i class="bi bi-bag-heart-fill me-2"></i>KitaElektronik
                 </h5>
                 <p class="text-secondary">
-                    Toko online terpercaya dengan berbagai produk berkualitas.
+                    Toko elektronik terpercaya dengan berbagai peralatan elektronik berkualitas.
                     Belanja mudah, aman, dan nyaman.
                 </p>
                 <div class="d-flex gap-3 mt-3">
-                    <a href="#" class="text-secondary fs-5"><i class="bi bi-facebook"></i></a>
                     <a href="#" class="text-secondary fs-5"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="text-secondary fs-5"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="text-secondary fs-5"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="text-secondary fs-5"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-secondary fs-5"><i class="bi bi-github"></i></a>
+                    <a href="#" class="text-secondary fs-5"><i class="bi bi-discord"></i></a>
                 </div>
             </div>
 
@@ -63,15 +63,15 @@
                 <ul class="list-unstyled text-secondary">
                     <li class="mb-2">
                         <i class="bi bi-geo-alt me-2"></i>
-                        Jl. Contoh No. 123, Bandung
+                        Jl. Strawberry No. 70, Bandung
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-telephone me-2"></i>
-                        (022) 123-4567
+                        +62 881-0228-90472
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-envelope me-2"></i>
-                        info@tokoonline.com
+                        mannmasaki@gmail.com
                     </li>
                 </ul>
             </div>
@@ -82,11 +82,8 @@
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start">
                 <p class="text-secondary mb-0 small">
-                    &copy; {{ date('Y') }} TokoOnline. All rights reserved.
+                    &copy; {{ date('Y') }} KitaElektronik. All rights reserved.
                 </p>
-            </div>
-            <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-                <img src="{{ asset('images/payment-methods.png') }}" alt="Payment Methods" height="30">
             </div>
         </div>
     </div>

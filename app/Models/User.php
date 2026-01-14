@@ -108,24 +108,15 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        // Prioritas 1: Avatar yang di-upload (file fisik ada di server)
-        // Kita harus cek Storage::exists() agar tidak broken image jika file-nya terhapus manual.
         if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
             return asset('storage/' . $this->avatar);
         }
 
-        // Prioritas 2: Avatar dari Google (URL eksternal dimulai dengan http)
-        // Biasanya ini terjadi saat user login via Socialite (Google Sign-In).
         if (str_starts_with($this->avatar ?? '', 'http')) {
             return $this->avatar;
         }
 
-        // Prioritas 3: Gravatar (Layanan sedunia untuk avatar berdasarkan email)
-        // Gravatar menggunakan MD5 hash dari email lowercase.
-        // Jika user belum punya gravatar, tampilkan 'mp' (Mystery Person).
-        // &s=200 artinya size gambar 200x200px.
-        $hash = md5(strtolower(trim($this->email)));
-        return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=200";
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=d74e4e&color=fff&length=1';
     }
 
 /**
@@ -135,16 +126,9 @@ class User extends Authenticatable
  */
     public function getInitialsAttribute(): string
     {
-        $words    = explode(' ', $this->name);
-        $initials = '';
-
-        foreach ($words as $word) {
-            // Ambil huruf pertama tiap kata dan kapitalkan
-            $initials .= strtoupper(substr($word, 0, 1));
-        }
-
-        // Ambil maksimal 2 huruf pertama saja
-        return substr($initials, 0, 2);
+        // Ambil kata pertama saja, lalu ambil huruf pertamanya
+        $firstName = explode(' ', trim($this->name))[0];
+        return strtoupper(substr($firstName, 0, 1));
     }
 
 }

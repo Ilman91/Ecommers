@@ -45,11 +45,19 @@ class OrderController extends Controller
     {
         // Validasi status yang dikirim form
         $request->validate([
-            'status' => 'required|in:processing,shipped,delivered,cancelled'
+            'status' => 'required|in:processing,shipped,delivered,cancelled,completed'
         ]);
 
+        if ($order->status === 'pending' && in_array($request->status, ['processing', 'shipped', 'delivered', 'completed'])) {
+        return back()->with('error', 'Gagal! Pesanan ini belum dibayar oleh customer.');
+        }
+
         $oldStatus = $order->status;
-        $newStatus = $request->status === 'completed' ? 'delivered' : $request->status;
+        $newStatus = $request->status;
+
+        if ($newStatus === 'completed') {
+        $newStatus = 'delivered';
+        }
 
         // ============================================================
         // LOGIKA RESTOCK (PENTING!)

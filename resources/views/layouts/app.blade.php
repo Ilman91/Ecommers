@@ -32,32 +32,26 @@ FUNGSI: Master layout untuk halaman customer/publik
 </head>
 
 <body>
-    {{-- ============================================
-    NAVBAR
-    ============================================ --}}
-    @include('partials.navbar')
+    {{-- Tampilkan Navbar HANYA jika bukan halaman login, register, atau lupa password --}}
+    @if(!Route::is('login') && !Route::is('register') && !Str::contains(Route::currentRouteName(), 'password'))
+        @include('partials.navbar')
+    @endif
 
-    {{-- ============================================
-    FLASH MESSAGES
-    ============================================ --}}
+    {{-- Flash messages tetap muncul buat notif kalau ada error --}}
     <div class="container mt-3">
         @include('partials.flash-messages')
     </div>
 
-    {{-- ============================================
-    MAIN CONTENT
-    ============================================ --}}
     <main class="min-vh-100">
         @yield('content')
     </main>
 
-    {{-- ============================================
-    FOOTER
-    ============================================ --}}
-    @include('partials.footer')
+    {{-- Tampilkan Footer HANYA jika bukan halaman login, register, atau lupa password --}}
+    @if(!Route::is('login') && !Route::is('register') && !Str::contains(Route::currentRouteName(), 'password'))
+        @include('partials.footer')
+    @endif
 
     {{-- Stack untuk JS tambahan per halaman --}}
-    @stack('scripts')
     <script>
         /**
        * Fungsi AJAX untuk Toggle Wishlist
@@ -97,33 +91,94 @@ FUNGSI: Master layout untuk halaman customer/publik
           console.error("Error:", error);
           showToast("Terjadi kesalahan sistem.", "error");
         }
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+            updateWishlistUI(productId, data.added); 
+            // Fungsi di bawah ini sudah cukup untuk mengupdate semua angka di layar
+            updateWishlistCounter(data.count); 
+            showToast(data.message);
+        }
       }
 
       function updateWishlistUI(productId, isAdded) {
-        // Cari semua tombol wishlist untuk produk ini (bisa ada di card & detail page)
-        const buttons = document.querySelectorAll(`.wishlist-btn-${productId}`);
+          const buttons = document.querySelectorAll(`.wishlist-btn-${productId}`);
+          
+          // Update angka total di header wishlist (jika ada)
+          const totalLabel = document.getElementById('wishlist-total-count');
 
-        buttons.forEach((btn) => {
-          const icon = btn.querySelector("i"); // Menggunakan tag <i> untuk Bootstrap Icons
-          if (isAdded) {
-            // Ubah jadi merah solid (Love penuh)
-            icon.classList.remove("bi-heart", "text-secondary");
-            icon.classList.add("bi-heart-fill", "text-danger");
-          } else {
-            // Ubah jadi abu-abu outline (Love kosong)
-            icon.classList.remove("bi-heart-fill", "text-danger");
-            icon.classList.add("bi-heart", "text-secondary");
-          }
-        });
+          buttons.forEach((btn) => {
+              const icon = btn.querySelector("i");
+              const textSpan = btn.querySelector(`.wishlist-text-${productId}`);
+
+              if (isAdded) {
+                  icon.classList.remove("bi-heart", "text-secondary");
+                  icon.classList.add("bi-heart-fill", "text-danger");
+                  if (textSpan) textSpan.innerText = "Hapus dari Wishlist";
+              } else {
+                  // JIKA STATUSNYA REMOVED (isAdded == false)
+                  icon.classList.remove("bi-heart-fill", "text-danger");
+                  icon.classList.add("bi-heart", "text-secondary");
+                  if (textSpan) textSpan.innerText = "Simpan ke Wishlist";
+
+                  // LOGIC KHUSUS HALAMAN WISHLIST: Hapus Card dari Grid
+                  const cardItem = document.getElementById(`wishlist-item-${productId}`);
+                  if (cardItem) {
+                      cardItem.style.transition = "0.3s";
+                      cardItem.style.opacity = "0";
+                      cardItem.style.transform = "scale(0.8)";
+                      
+                      setTimeout(() => {
+                          cardItem.remove();
+                          
+                          // Update label total produk di halaman wishlist
+                          if (totalLabel) {
+                              let currentTotal = parseInt(totalLabel.innerText);
+                              totalLabel.innerText = Math.max(0, currentTotal - 1);
+                              
+                              // Jika habis, tampilkan empty state
+                              const grid = document.getElementById('wishlist-grid');
+                              if (grid && grid.children.length === 0) {
+                                  const container = document.getElementById('wishlist-container');
+                                  const template = document.getElementById('empty-wishlist-template');
+                                  container.innerHTML = template.innerHTML;
+                              }
+                          }
+                      }, 300);
+                  }
+              }
+          });
       }
 
       function updateWishlistCounter(count) {
-        const badge = document.getElementById("wishlist-count");
-        if (badge) {
-          badge.innerText = count;
-          // Bootstrap badge display toggle logic
-          badge.style.display = count > 0 ? "inline-block" : "none";
-        }
+          // 1. Update Badge di Navbar
+          const navBadge = document.getElementById("wishlist-count");
+          if (navBadge) {
+              navBadge.innerText = count;
+              // Paksa sembunyi jika nol, munculkan jika lebih dari nol
+              if (parseInt(count) <= 0) {
+                  navBadge.style.setProperty('display', 'none', 'important');
+              } else {
+                  navBadge.style.display = "inline-block";
+              }
+          }
+
+          // 2. Update Angka di Halaman Wishlist
+          const pageTotal = document.getElementById("wishlist-total-count");
+          if (pageTotal) {
+              pageTotal.innerText = count;
+          }
+      }
+
+      function showToast(message, type = "success") {
+          // Kalau kamu pakai library seperti SweetAlert2 atau Toastr, panggil di sini.
+          // Contoh versi native alert sederhana:
+          console.log(`${type.toUpperCase()}: ${message}`);
+          
+          // Atau kalau mau pakai Toast Bootstrap (asumsi ada elemen toast di HTML):
+          // const toastElement = document.getElementById('liveToast');
+          // ... logic bootstrap toast ...
       }
     </script>
     @stack('scripts')

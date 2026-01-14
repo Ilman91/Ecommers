@@ -12,14 +12,16 @@
             </div>
             <div class="card-body">
                 @foreach($order->items as $item)
-                    <div class="d-flex mb-3">
-                        <img src="{{ $item->product->image_url }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 fw-bold">{{ $item->product->name }}</h6>
-                            <small class="text-muted">{{ $item->quantity }} x Rp {{ number_format($item->price, 0, ',', '.') }}</small>
-                        </div>
-                        <div class="fw-bold">
-                            Rp {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0 fw-bold">{{ $item->product->name }}</h6>
+                        <div class="small">
+                            @if($item->product && $item->product->price > $item->price)
+                                <span class="text-muted text-decoration-line-through me-1">
+                                    Rp {{ number_format($item->product->price, 0, ',', '.') }}
+                                </span>
+                            @endif
+                            <br>
+                            <span class="text-dark">{{ $item->quantity }} x Rp {{ number_format($item->price, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 @endforeach
@@ -44,36 +46,64 @@
             </div>
         </div>
 
-        {{-- Action Card --}}
-        <div class="card shadow-sm border-0 bg-light">
-            <div class="card-body">
-                <h6 class="fw-bold mb-3">Update Status Order</h6>
-                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
+                
+            {{-- Action Card --}}
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Update Status Order</h6>
+                        
+                        <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
 
-                    <div class="mb-3">
-                        <label class="form-label small text-muted">Status Saat Ini: <strong>{{ ucfirst($order->status) }}</strong></label>
-                        <select name="status" class="form-select">
-                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing (Sedang Dikemas)</option>
-                            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed (Selesai/Dikirim)</option>
-                            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled (Batalkan & Restock)</option>
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label small text-muted">
+                                    Status Saat Ini: <span class="badge bg-secondary">{{ ucfirst($order->status) }}</span>
+                                </label>
+                                
+                                <select name="status" class="form-select">
+                                    @if($order->status == 'pending')
+                                        <option value="pending" selected>Pending (Menunggu Pembayaran)</option>
+                                        <option value="cancelled">Cancelled (Batalkan Pesanan)</option>
+                                    @else
+                                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>
+                                            Processing (Sedang Dikemas)
+                                        </option>
+                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>
+                                            Shipped (Dalam Pengiriman)
+                                        </option>
+                                        <option value="completed" {{ ($order->status == 'completed' || $order->status == 'delivered') ? 'selected' : '' }}>
+                                            Completed (Selesai)
+                                        </option>
+                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
+                                            Cancelled (Batalkan & Restock)
+                                        </option>
+                                    @endif
+                                </select>
+                            </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        Update Status
-                    </button>
-                </form>
+                            <button type="submit" class="btn btn-primary w-100" 
+                                {{ $order->status == 'cancelled' ? 'disabled' : '' }}>
+                                Update Status
+                            </button>
+                        </form>
 
-                @if($order->status == 'cancelled')
-                    <div class="alert alert-danger mt-3 mb-0 small">
-                        <i class="bi bi-info-circle"></i> Pesanan ini telah dibatalkan. Stok produk telah dikembalikan otomatis.
-                    </div>
-                @endif
+                        {{-- Warning jika masih pending --}}
+                        @if($order->status == 'pending')
+                            <div class="alert alert-warning mt-3 mb-0 small">
+                                <i class="bi bi-exclamation-triangle-fill"></i> 
+                                Pesanan belum dibayar. Anda hanya bisa membatalkan atau menunggu pembayaran masuk.
+                            </div>
+                        @endif
+
+                        @if($order->status == 'cancelled')
+                            <div class="alert alert-danger mt-3 mb-0 small">
+                                <i class="bi bi-info-circle"></i> 
+                                Pesanan ini telah dibatalkan. Stok produk telah dikembalikan otomatis.
+                            </div>
+                        @endif
+                </div>
             </div>
-        </div>
     </div>
 </div>
 @endsection

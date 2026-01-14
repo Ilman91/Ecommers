@@ -1,60 +1,48 @@
-{{-- resources/views/profile/edit.blade.php --}}
-
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h2 class="mb-4">Profil Saya</h2>
-
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="col-md-9">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-danger rounded-3 p-2 me-3 shadow-sm" style="background-color: rgb(215, 78, 78) !important;">
+                    <i class="bi bi-person-gear text-white fs-4"></i>
                 </div>
-            @endif
-
-            {{-- 1. Avatar Information --}}
-            <div class="card mb-4">
-                <div class="card-header bg-white fw-bold">Foto Profil</div>
-                <div class="card-body">
-                    @include('profile.partials.update-avatar-form')
+                <div>
+                    <h2 class="fw-bold mb-0">Pengaturan Profil</h2>
+                    <p class="text-muted mb-0 small">Kelola informasi akun dan keamanan KitaElektronik kamu.</p>
                 </div>
             </div>
 
-            {{-- 2. Profile Information --}}
-            <div class="card mb-4">
-                <div class="card-header bg-white fw-bold">Informasi Profil</div>
-                <div class="card-body">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
-
-            {{-- 3. Update Password --}}
-            <div class="card mb-4">
-                <div class="card-header bg-white fw-bold">Update Password</div>
-                <div class="card-body">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            {{-- 4. Connected Accounts --}}
-            <div class="card mb-4">
-                <div class="card-header bg-white fw-bold">Akun Terhubung</div>
-                <div class="card-body">
+            <div class="row g-4">
+            {{-- Kiri: Foto Profil & Akun Terhubung --}}
+            <div class="col-lg-4">
+                {{-- Langsung include tanpa dibungkus Card lagi --}}
+                @include('profile.partials.update-avatar-form')
+                
+                <div class="mt-4">
                     @include('profile.partials.connected-accounts')
                 </div>
             </div>
 
-            {{-- 5. Delete Account --}}
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white fw-bold">Hapus Akun</div>
-                <div class="card-body">
+            {{-- Kanan: Form Update, Password & Danger Zone --}}
+            <div class="col-lg-8">
+                {{-- Profile Info --}}
+                @include('profile.partials.update-profile-information-form')
+
+                {{-- Update Password --}}
+                <div class="mt-4">
+                    @include('profile.partials.update-password-form')
+                </div>
+
+                {{-- Danger Zone --}}
+                <div class="mt-4">
+                    {{-- Hapus Akun jangan dibungkus d-flex justify-between di sini, 
+                        biar file partial-nya yang ngatur layout sendiri --}}
                     @include('profile.partials.delete-user-form')
                 </div>
             </div>
-
+        </div>
         </div>
     </div>
 </div>
